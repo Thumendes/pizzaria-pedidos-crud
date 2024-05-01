@@ -6,14 +6,13 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import { Button } from "@/components/ui/button";
-import { CustomersTable } from "./table";
 import { createApi } from "@/lib/trpc/api";
 import { CustomersForm } from "./form";
+import { CustomersTable } from "./table";
 
 export default async function CustomersPage({ searchParams }: { searchParams: { editing?: string } }) {
   const api = await createApi();
-  const customer = await api.customers.getOne.query({ id: searchParams.editing ?? "" });
+  const customer = searchParams.editing ? await api.customers.getOne.query({ id: searchParams.editing }) : null;
 
   return (
     <>

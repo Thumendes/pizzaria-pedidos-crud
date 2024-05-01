@@ -8,9 +8,11 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useSearchParams } from "@/lib/hooks/useSearchParams";
 import { trpc } from "@/lib/trpc/client";
-import { formatDate } from "@/lib/utils";
+import { formatDate, formatPrice } from "@/lib/utils";
 import { RouterInput, RouterOutput } from "@/server/router";
 import { OrderStatus } from "@prisma/client";
+import { ExternalLink } from "lucide-react";
+import Link from "next/link";
 import { useMemo } from "react";
 import { z } from "zod";
 
@@ -39,7 +41,20 @@ export function OrdersTable({}: OrdersTableProps) {
         {
           id: "id",
           label: "ID",
-          field: "id",
+          render: (item) => (
+            <Link href={`/orders/${item.id}`}>
+              <div className="flex items-center text-sm text-muted-foreground hover:text-foreground">
+                {item.id} <ExternalLink className="size-4 ml-2" />
+              </div>
+            </Link>
+          ),
+          orderable: true,
+        },
+        {
+          id: "total",
+          label: "Total",
+          field: "total",
+          render: (item) => formatPrice(item.total),
           orderable: true,
         },
         {

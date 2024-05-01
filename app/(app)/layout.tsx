@@ -1,6 +1,6 @@
+import { MenuLink } from "@/components/menu-link";
 import { ThemeToggle } from "@/components/providers/root";
 import { Pizza } from "lucide-react";
-import Link from "next/link";
 import { ReactNode } from "react";
 
 export default function AppLayout({ children }: { children: ReactNode }) {
@@ -14,11 +14,12 @@ export default function AppLayout({ children }: { children: ReactNode }) {
             </h3>
           </div>
 
-          <div className="space-x-4 flex items-center">
+          <div className="space-x-3 flex items-center">
             <ThemeToggle />
-            <Link href="/menu">Menu</Link>
-            <Link href="/orders">Pedidos</Link>
-            <Link href="/customers">Clientes</Link>
+
+            <MenuLink href="/orders">Pedidos</MenuLink>
+            <MenuLink href="/customers">Clientes</MenuLink>
+            <MenuLink href="/menu">Menu</MenuLink>
           </div>
         </div>
       </nav>

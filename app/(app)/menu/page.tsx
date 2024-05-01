@@ -13,7 +13,7 @@ import { MenuItemsForm } from "./form";
 
 export default async function MenuPage({ searchParams }: { searchParams: { editing?: string } }) {
   const api = await createApi();
-  const menu = await api.menu.getOneItem.query({ id: searchParams.editing ?? "" });
+  const menu = searchParams.editing ? await api.menu.getOneItem.query({ id: searchParams.editing }) : null;
 
   return (
     <>

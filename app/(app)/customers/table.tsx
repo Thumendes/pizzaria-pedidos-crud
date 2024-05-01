@@ -10,7 +10,8 @@ import { useSearchParams } from "@/lib/hooks/useSearchParams";
 import { trpc } from "@/lib/trpc/client";
 import { formatDate } from "@/lib/utils";
 import { RouterInput, RouterOutput } from "@/server/router";
-import { Filter } from "lucide-react";
+import { ExternalLink, Filter } from "lucide-react";
+import Link from "next/link";
 import { useMemo } from "react";
 import { toast } from "sonner";
 
@@ -41,7 +42,13 @@ export function CustomersTable({}: CustomersTableProps) {
         {
           id: "name",
           label: "Nome",
-          field: "name",
+          render: (item) => (
+            <Link href={`/customers/${item.id}`}>
+              <div className="flex items-center text-sm text-muted-foreground hover:text-foreground">
+                {item.name} <ExternalLink className="size-4 ml-2" />
+              </div>
+            </Link>
+          ),
           orderable: true,
         },
         {

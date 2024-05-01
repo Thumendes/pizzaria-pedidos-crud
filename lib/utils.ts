@@ -16,3 +16,14 @@ export function formatDate(date: string | Date) {
 
   return intl.format(new Date(date));
 }
+
+export function formatPrice(price: number) {
+  return new Intl.NumberFormat("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+  }).format(price);
+}
+
+export function delay(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}

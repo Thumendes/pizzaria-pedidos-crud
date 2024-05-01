@@ -30,7 +30,7 @@ const OrdersFormValues = z.object({
   items: z.array(
     z.object({
       menuItemId: z.string(),
-      quantity: z.number(),
+      quantity: z.string().transform(Number),
     })
   ),
 });
