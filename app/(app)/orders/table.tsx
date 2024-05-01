@@ -1,14 +1,18 @@
 "use client";
 
+import { alert } from "@/components/alert-dialog";
 import { Table, TableAction, TableColumn } from "@/components/table-compose";
 import { useFilters } from "@/components/table-compose/hooks/useFilters";
 import { usePagination } from "@/components/table-compose/hooks/usePagination";
 import { Badge } from "@/components/ui/badge";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useSearchParams } from "@/lib/hooks/useSearchParams";
 import { trpc } from "@/lib/trpc/client";
 import { formatDate } from "@/lib/utils";
 import { RouterInput, RouterOutput } from "@/server/router";
+import { OrderStatus } from "@prisma/client";
 import { useMemo } from "react";
+import { z } from "zod";
 
 type Filters = RouterInput["orders"]["getAll"];
 type OrdersItemResponse = RouterOutput["orders"]["getAll"]["data"][0];
@@ -20,12 +24,14 @@ export function OrdersTable({}: OrdersTableProps) {
   const filters = useFilters<Filters["sort"]>();
   const pagination = usePagination();
 
-  const { data, isLoading } = trpc.orders.getAll.useQuery({
+  const { data, isLoading, refetch } = trpc.orders.getAll.useQuery({
     order: filters.order,
     sort: filters.sort,
     page: pagination.currentPage,
     take: pagination.currentLimit,
   });
+
+  const updateMutation = trpc.orders.update.useMutation();
 
   const tableColumns = useMemo(
     () =>
@@ -39,7 +45,42 @@ export function OrdersTable({}: OrdersTableProps) {
         {
           id: "status",
           label: "Status",
-          render: (item) => <Badge>{item.status}</Badge>,
+          render: (item) => (
+            <Badge
+              onClick={async () => {
+                const newStatus = await alert.form(`Desenha alterar o status do pedido #${item.id}`, {
+                  schema: z.object({ status: z.nativeEnum(OrderStatus) }),
+                  defaultValues: { status: item.status },
+                  form(form) {
+                    return (
+                      <Select
+                        onValueChange={(value) => form.setValue("status", value as OrderStatus)}
+                        defaultValue={form.watch("status")}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Status" />
+                        </SelectTrigger>
+
+                        <SelectContent>
+                          <SelectItem value={OrderStatus.PENDING}>Pendente</SelectItem>
+                          <SelectItem value={OrderStatus.CONFIRMED}>Confirmado</SelectItem>
+                          <SelectItem value={OrderStatus.CANCELLED}>Cancelado</SelectItem>
+                          <SelectItem value={OrderStatus.DELIVERED}>Entregue</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    );
+                  },
+                });
+
+                if (newStatus) {
+                  await updateMutation.mutateAsync({ id: item.id, status: newStatus.status });
+                  await refetch();
+                }
+              }}
+            >
+              {item.status}
+            </Badge>
+          ),
           orderable: true,
         },
         {
