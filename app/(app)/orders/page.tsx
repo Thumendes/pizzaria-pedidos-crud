@@ -6,13 +6,10 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import { createApi } from "@/lib/trpc/api";
+import { OrdersForm } from "./form";
 import { OrdersTable } from "./table";
 
-export default async function OrdersPage({ searchParams }: { searchParams: { editing?: string } }) {
-  const api = await createApi();
-  const order = await api.orders.getOne.query({ id: searchParams.editing ?? "" });
-
+export default async function OrdersPage() {
   return (
     <>
       <header className="py-6 flex items-start justify-between">
@@ -30,11 +27,13 @@ export default async function OrdersPage({ searchParams }: { searchParams: { edi
             </BreadcrumbList>
           </Breadcrumb>
         </div>
+
+        <div>
+          <OrdersForm />
+        </div>
       </header>
 
       <OrdersTable />
-
-      <pre>{JSON.stringify(order, null, 2)}</pre>
     </>
   );
 }

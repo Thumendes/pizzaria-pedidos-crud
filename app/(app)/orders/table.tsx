@@ -69,7 +69,7 @@ export function OrdersTable({}: OrdersTableProps) {
   return (
     <Table.Root
       columns={tableColumns}
-      actions={tableActions}
+      // actions={tableActions}
       isLoading={isLoading}
       data={data?.data || []}
       keyExtractor="id"

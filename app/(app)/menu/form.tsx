@@ -89,6 +89,7 @@ export function MenuItemsForm({ editing }: MenuItemsFormProps) {
       open={open}
       onOpenChange={(state) => {
         if (!state) {
+          form.reset();
           setSearchParams((params) => params.delete("editing"));
         }
 
